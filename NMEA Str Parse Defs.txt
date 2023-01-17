@@ -1,0 +1,17 @@
+# HDT:
+'{HeadingTrue:g},{mode:w}*{CheckSum:x}'
+
+
+# GGA:
+'{Time:f},{Latitude:nlat},{NorS:w},{Longitude:nlat},{EorW:w},{FixQuality:d},{NumSats:d},{HDOP:of},{AntennaHeight:of},{AntHt_units:w},{GeoidHeight:of},{GeoHt_units:w},{LastDGPSUpdate:of},{DGPSStationID:od}*{CheckSum:x}'
+    
+    
+# # VTG:
+'{TrackMG_True:f},{TrackMG_T:w},{TrackMG_Mag:f},{TrackMG_M:w},
+{GndSpd_Knots:f},{GndSpd_K:w},{GndSpd_KiloPHr:f},{GndSpd_KPH:w},{mode:w}*{CheckSum:x}'
+
+
+
+# PASHR:
+'{Time:f},{Heading:f},{True_Hdg:w},{Roll:f},{pitch:f},
+{heave:f},{roll_sd:f},{pitch_sd:f},{hdg_sd:f},{quality_flag:w}*{Checksum:x}'
