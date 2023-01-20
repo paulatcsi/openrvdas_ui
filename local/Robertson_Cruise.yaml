@@ -1,7 +1,7 @@
 # To run configurations in this file:
 #
 #   python logger\listener\listen.py --config_file local\stonybrook\seawolf.yaml:met1_on
-#
+#   python logger/listener/listen.py --config_file Users/parisp15/Documents/GitHub/openrvdas_ui/local/Robertson_Cruise.yaml()
 # To run with cached data server:
 #
 # In one terminal:
@@ -22,15 +22,22 @@
         port: 56432
     transforms:
     - class: TimestampTransform
-#    - clsss: ToDASRecordTransform
-#    - class: PrefixTransform
-#      kwargs:
-#        prefix:
-#    - class: ParseTransform
-#      kwargs:
-#         record_format:
-#         definition_path: /opt/openrvdas/local/devices/Robertson.yaml
+#    - class: ToDASRecordTransform
+    - class: PrefixTransform
+      kwargs:
+        prefix: 'vh300'
+    - class: ParseTransform
+      kwargs:
+        record_format:
+        definition_path: /Users/parisp15/Documents/GitHub/openrvdas_ui/local/devices/Robertson_devices.yaml
     writers:
+    - class: TextFileWriter
     - class: LogfileWriter
       kwargs:
-         filebase: /Users/parisp15/Documents/logging.txt
+        filebase: /Users/parisp15/Documents/VectorHemisphere300_log
+#     - class: InfluxDBWriter
+#         kwargs:
+#         port: 8660
+#     - class: UDPWriter
+#       kwargs:
+#         port: 

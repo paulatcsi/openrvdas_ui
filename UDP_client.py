@@ -13,12 +13,13 @@ import NMEA_Sentence_Parser_Functions as parsers
 
 
 sys.path.append('/opt/openrvdas/')
-from logger.writers.udp_writer import UDPWriter
 from logger.readers.udp_reader import UDPReader
 
 # writers:
 from logger.writers.text_file_writer import TextFileWriter
 from logger.writers.influxdb_writer import InfluxDBWriter
+from logger.writers.udp_writer import UDPWriter
+
 
 # $$$$$ Set Up Buckets in the influxDB for each sentence type $$$$$$$$$$$$$$$$$
 #
@@ -126,7 +127,7 @@ PORT = 56432  # Port to listen on (non-privileged ports are > 1023)
 
 reader = UDPReader(PORT)
 
-# create databsase buckets:
+# create database buckets:
 bucket_list = create_influx_buckets()
  
 # instantiate log file writer instances:

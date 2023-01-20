@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+echo_server.py
+
 UDP server shipping NMEA strings via openRVDAS's UDP_Writer, such that it
 might be read by the corresponding UDP REader in Listen.py
 
@@ -8,10 +10,23 @@ hoping...
 
 Created on Mon Dec 12 19:53:36 2022
 
+to start the server enter the following on an idle command prompt:
+    
+    ./echo_server.py
+    
+    
+to stop the server:
+    
+    Cntl-C
+
+
+if it becomes necessary to force "close" the port, enter the following at a
+command prompt:
+    
+    sudo kill -9 $(lsof -t -i:56432)
+    
 @author: parisp15
 """
-
-# echo-server.py
 
 #import socket
 import sys
@@ -21,14 +36,12 @@ sys.path.append('/opt/openrvdas/')
 from logger.writers.udp_writer import UDPWriter
 from logger.readers.udp_reader import UDPReader
 
-
-# open a port and socket and go to it
 HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 56432  # Port to listen on (non-privileged ports are > 1023)
 
 
 # load NMEA sentences from source file into a Python list...
-print('loading NMEA ssentences from source')
+print('loading NMEA sentences from source')
 
 f = open('simulated_nmea_sentences.csv','r')
 
@@ -38,8 +51,8 @@ with f:
     for line in f:
         nmea_strings.append(line)     # .encode("utf-8")
         
-f.close()
-
+    f.close()
+    
 
 reader = UDPReader(port=PORT)
 writer = UDPWriter(port=PORT)
@@ -53,7 +66,7 @@ while c <= 431:
    data_to_send = nmea_strings[c]
    
    wait_time = 1.0
-   time.sleep(wait_time)        # wait wait_time sec betwen packets
+   time.sleep(wait_time)        # wait wait_time sec between packets
    
    writer.write(data_to_send)   
    

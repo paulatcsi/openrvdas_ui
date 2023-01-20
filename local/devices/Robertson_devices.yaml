@@ -1,0 +1,29 @@
+################################################################################
+# Device definitions for R/V Robertson
+#
+# See README.md in parent directory (on ce it's written)
+
+vh300:
+  category: "device"
+  device_type: "VectorHemi300"
+  serial_number: "unknown"
+  description: "Vector Hemisphere 300 GNSS/GPS."
+
+
+
+################################################################################
+# VectorHemi300  Device Type definitions
+#
+# Handles data stream from Vector GNSS instrument on R/V Ms Caroline (Coastal Studies Institute)
+
+######################################
+VectorHemi300:
+    category: "device_type"
+    format:
+        HDT: '{Sentence:w},{HeadingTrue:g},{mode:w}*{CheckSum:x}'
+
+        GGA: '{Sentence:w},{Time:f},{Latitude:nlat},{NorS:w},{Longitude:nlat},{EorW:w},{FixQuality:d},{NumSats:d},{HDOP:of},{AntennaHeight:of},{AntHt_units:w},{GeoidHeight:of},{GeoHt_units:w},{LastDGPSUpdate:of},{DGPSStationID:od}*{CheckSum:x}'
+
+        VTG: '{TrackMG_True:f},{TrackMG_T:w},{TrackMG_Mag:f},{TrackMG_M:w},{GndSpd_Knots:f},{GndSpd_K:w},{GndSpd_KiloPHr:f},{GndSpd_KPH:w},{mode:w}*{CheckSum:x}'
+
+        SHR: '{Time:f},{Heading:f},{True_Hdg:w},{Roll:f},{pitch:f},{heave:f},{roll_sd:f},{pitch_sd:f},{hdg_sd:f},{quality_flag:w}*{Checksum:x}'
