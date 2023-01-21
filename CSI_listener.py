@@ -226,7 +226,7 @@ def handle_pashr_sentences(nmea_sentence):
 
     das_record = parser.parse_record(nmea_sentence)
     #das_record = toDASRec.transform(p)
-    print('For PASHR:','\n',das_record,'\n')
+    #print('For PASHR:','\n',das_record,'\n')
 
     return(das_record)
 
@@ -237,9 +237,8 @@ def handle_pashr_sentences(nmea_sentence):
 # Main Task Dispatch:
 #
 # 
-#import socket
 #224.0.0.251
-#192.168.86.249
+#192.168.86.249  # the Ms Caroline's network, perhaps?
 
 HOST = "127.0.0.1"  #"127.0.0.1"  # The server's hostname or IP address
 PORT = 56432  #65432  # The port used by the server
@@ -256,8 +255,6 @@ text_writer = TextFileWriter(logfile_path+'VectorHemisphere330_log_txt')
 
 # create databsase buckets:
 bucket_list = create_influx_buckets()
-# s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# s.connect((HOST, PORT))
 
 
 # LET'S GET STARTED...
@@ -267,12 +264,6 @@ record_counter = 0
 while True:
     
     data = data_reader.read()
-    
-    # trac k and report number of sentences processed..
-    record_counter = record_counter + 1
-    
-    if record_counter % 50 == 0:
-        print(record_counter, 'records processed...')
 
     try:
         dl = data.split(',')    # convert bytes to str then to list decode("utf-8")
@@ -281,52 +272,31 @@ while True:
         
     if dl[0] == '$GPHDT':
         das_record = handle_hdt_sentences(data)
-       # bucket_list[0].write(das_record)
-        #time_stamp = ','+str(das_record['timestamp'])
-        #log_file_list[0].write(data.decode("utf-8")+time_stamp)
-        #print('For HDT:','\n',das_record,'\n')
+        bucket_list[0].write(das_record)
         
     if dl[0] == '$GPVTG':
         das_record = handle_vtg_sentences(data)
-        #bucket_list[1].write(das_record)
-        #time_stamp = ','+str(das_record['timestamp'])
-        #log_file_list[1].write(data.decode("utf-8")+time_stamp)
-        # print('For VTG:','\n',das_record,'\n')
+        bucket_list[1].write(das_record)
         
     if dl[0] == '$PASHR':
         das_record = handle_pashr_sentences(data)
-        #bucket_list[3].write(das_record)
-        #time_stamp = ','+str(das_record['timestamp'])
-        #log_file_list[3].write(data.decode("utf-8")+time_stamp)
-        # print('For PASHR:','\n',das_record,'\n')
+        bucket_list[3].write(das_record)
         
     if dl[0] == '$GPGGA':
         das_record = handle_gga_sentences(data)   #.decode("utf-8")
-        #bucket_list[2].write(das_record)
-        #time_stamp = ','+str(das_record['timestamp'])
-        #log_file_list[2].write(data.decode("utf-8")+time_stamp)
-        # print('For GGA:','\n',das_record,'\n')
+        bucket_list[2].write(das_record)
  
     # returns time stamp from DAS Record in UNIX seconds...
     time_stamp = ','+str(das_record['timestamp'])
 
-    # TimestampTrnsform returns ISO 8601 time stamp
+    # TimestampTransform returns ISO 8601 time
     log_writer.write(TimestampTransform().transform(data))
     text_writer.write(data.rstrip()+time_stamp)
         
-    # rec = {}
-    # in_rec = net_reader.read()
-    # time.sleep(1)
-    # print(in_rec)
-
-
-# try:
-#     # write record to influxDB...
-#     db_writer.write(das_record)
-
-# except IndexError as e:
-#     print('Skipping record...', 'because', e)
-            
-# except ValueError as e:
-#     print('Skipping record...', 'because', e)
+   
+    # trac k and report number of sentences processed..
+    record_counter = record_counter + 1
+        
+    if record_counter % 50 == 0:
+        print(record_counter, 'records processed...')
         
