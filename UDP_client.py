@@ -8,8 +8,8 @@ Created on Thu Jan 12 14:26:12 2023
 
 import sys
 
-sys.append.path('Users/parisp15/Documents/NCSU/')
-import NMEA_Sentence_Parser_Functions as parsers
+sys.path.append('Users/parisp15/Documents/GitHub/openrvdas_ui/')
+import NMEA_sentence_parsing_definitions as parsers
 
 
 sys.path.append('/opt/openrvdas/')
@@ -19,6 +19,7 @@ from logger.readers.udp_reader import UDPReader
 from logger.writers.text_file_writer import TextFileWriter
 from logger.writers.influxdb_writer import InfluxDBWriter
 from logger.writers.udp_writer import UDPWriter
+
 
 
 # $$$$$ Set Up Buckets in the influxDB for each sentence type $$$$$$$$$$$$$$$$$
@@ -160,7 +161,7 @@ while True:
     record_counter = record_counter + 1
         
     if record_counter % 50 == 0:
-        print(record_counter, 'records processed...'
+        print(record_counter, 'records processed...')
     
 
              
