@@ -41,6 +41,7 @@ from logger.transforms.prefix_transform import PrefixTransform
 from logger.writers.text_file_writer import TextFileWriter
 from logger.writers.logfile_writer import LogfileWriter
 from logger.writers.influxdb_writer import InfluxDBWriter
+from logger.writers.udp_writer import UDPWriter
 
 from logger.utils.record_parser import RecordParser
 
@@ -245,6 +246,7 @@ def handle_pashr_sentences(nmea_sentence):
 
 HOST = "192.168.1.255"  # <-- Miss Caroline's but HOST not needed... 127.0.0.1
 PORT = 56432  # 16003 <--Miss Caroline's VectorHemi330
+BROADCAST_PORT = 65432
 
 # instantiate reader, transform, and writer instances: 
 data_reader = UDPReader(PORT)
@@ -255,6 +257,8 @@ prefix = PrefixTransform('vh300')
 date_of_today = datetime.utcnow().strftime('%Y-%m-%d')
 log_writer = LogfileWriter(logfile_path+'VectorHemisphere330_log')
 text_writer = TextFileWriter(logfile_path+'VectorHemisphere330_log_csv-'+date_of_today)
+
+udp_writer = UDPWriter(BROADCAST_PORT)
 
 
 # create databsase buckets:
@@ -272,31 +276,38 @@ while True:
     try:
         dl = data.split(',')    # convert bytes to str then to list decode("utf-8")
     except Exception as e:
-        print('Something went wrong...',e)
+        print('Something went wrong trying to split the raw data stream...',e)
+     
+    try:    
+        if dl[0] == '$GPHDT':
+            das_record = NMEA_parsers.handle_hdt_sentences(data)
+            bucket_list[0].write(das_record)
         
-    if dl[0] == '$GPHDT':
-        das_record = NMEA_parsers.handle_hdt_sentences(data)
-        bucket_list[0].write(das_record)
+        if dl[0] == '$GPVTG':
+            das_record = NMEA_parsers.handle_vtg_sentences(data)
+            bucket_list[1].write(das_record)
         
-    if dl[0] == '$GPVTG':
-        das_record = NMEA_parsers.handle_vtg_sentences(data)
-        bucket_list[1].write(das_record)
+        if dl[0] == '$PASHR':
+            das_record = NMEA_parsers.handle_pashr_sentences(data)
+            bucket_list[3].write(das_record)
         
-    if dl[0] == '$PASHR':
-        das_record = NMEA_parsers.handle_pashr_sentences(data)
-        bucket_list[3].write(das_record)
+        if dl[0] == '$GPGGA':
+            das_record = NMEA_parsers.handle_gga_sentences(data)   #.decode("utf-8")
+            bucket_list[2].write(das_record)
+    except Exception as e:
+        print('Sentence parsing error:', e)
         
-    if dl[0] == '$GPGGA':
-        das_record = NMEA_parsers.handle_gga_sentences(data)   #.decode("utf-8")
-        bucket_list[2].write(das_record)
- 
+        
     # returns time stamp from DAS Record in UNIX seconds...
     time_stamp = ','+str(das_record['timestamp'])
 
     # TimestampTransform returns ISO 8601 time
     log_writer.write(TimestampTransform().transform(data))
     text_writer.write(data.rstrip()+time_stamp)
-        
+    
+    # write data unaltered back out onto the network:    
+    udp_writer.write(data)
+    
    
     # trac k and report number of sentences processed..
     record_counter = record_counter + 1

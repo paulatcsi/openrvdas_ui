@@ -1,0 +1,63 @@
+Dsta tracking Queries (generated inside influxDB and copied into Grafana)
+
+
+For the vessel latitude (N from GGA sentences):
+from(bucket: "gga")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "gga")
+  |> filter(fn: (r) => r["_field"] == "Latitude")
+
+
+For the vessel longitude (W from GGA sentences):
+from(bucket: "gga")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "gga")
+  |> filter(fn: (r) => r["_field"] == "Longitude")
+
+
+For the number of GNSS satellites visible:
+from(bucket: "gga")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "gga")
+  |> filter(fn: (r) => r["_field"] == "NumSats")
+  
+  
+For the vessel heave (in meters from PASHR sentences):
+from(bucket: "pashr")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "pashr")
+  |> filter(fn: (r) => r["_field"] == "heave")
+  
+  
+For the vessel pitch (in meters from PASHR sentences):
+from(bucket: "pashr")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "pashr")
+  |> filter(fn: (r) => r["_field"] == "pitch")
+
+
+For the vessel rolls (in degrees from PASHR sentences):
+from(bucket: "pashr")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_field"] == "Roll")
+  
+
+For the vessel speed over ground (in km/hr from VTG sentences):
+from(bucket: "vtg")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "vtg")
+  |> filter(fn: (r) => r["_field"] == "GndSpd_KiloPHr")
+
+
+For the vessel speed over ground (in kts from VTG sentences):
+from(bucket: "vtg")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "vtg")
+  |> filter(fn: (r) => r["_field"] == "GndSpd_K")
+  
+  
+For the vessel heading (True from HDT sentences):
+from(bucket: "hdt")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "hdt")
+  |> filter(fn: (r) => r["_field"] == "HeadingTrue")
