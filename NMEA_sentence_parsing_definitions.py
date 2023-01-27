@@ -33,6 +33,8 @@ Created on Tue Jan 24 16:06:50 2023
 import sys
 
 sys.path.append('/opt/openrvdas/')
+sys.path.append('Users/parisp15/Documents/GitHub/openrvdas_ui/')
+
 
 # transforms:
 from logger.transforms.timestamp_transform import TimestampTransform

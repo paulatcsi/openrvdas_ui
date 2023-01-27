@@ -45,7 +45,7 @@ sys.path.append('/opt/openrvdas/')
 from logger.writers.udp_writer import UDPWriter
 from logger.readers.udp_reader import UDPReader
 
-HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+DESTINATION = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 56432  # Port to listen/write on/to (non-privileged ports are > 1023)
 
 try:
@@ -68,7 +68,7 @@ with f:
 reader = UDPReader(port=PORT)
 writer = UDPWriter(port=PORT)
 
-print('Server up and running... \n and listening...')
+print('Server up and running... \n and broadcasting...')
 
 c = 0
 repeats = 0
@@ -78,7 +78,7 @@ while c <= 5000:
 
    wait_time = 1.0
    time.sleep(wait_time)        # wait wait_time sec between packets
-   
+
    writer.write(data_to_send)   
    
    c = c + 1

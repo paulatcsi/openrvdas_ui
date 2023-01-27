@@ -90,149 +90,7 @@ def create_influx_buckets():
     
 # $$$$$ For HDT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-def handle_hdt_sentences(nmea_sentence):
-    '''
-    Parameters
-    ----------
-    nmea_sentence: TYPE
-        DESCRIPTION.
 
-    Returns
-    -------
-    A Python dictionary formatted as a DASRecord.
-    
-    nmea_sentence = '$GPHDT,259.816,T*34'
-
-    '''
-    
-    #toDASRec = ToDASRecordTransform('GPHDT')
-
-    # add the timestamp...
-    nmea_sentence = TimestampTransform(sep=',').transform(nmea_sentence)      # {timestamp:ti},
-
-    parser = RecordParser(
-                  record_format='{timestamp:ti},{data_id:nc},{field_string}',
-                  field_patterns=['{HeadingTrue:g},{mode:w}*{CheckSum:x}'],
-                  delimiter=','
-                    )
-
-    das_record = parser.parse_record(nmea_sentence)
-    #das_record = toDASRec.transform(p)
-    #print('For HDT:','\n',p,'\n')
-    
-    return(das_record)
-
-
-
-# $$$$$ For GGA $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def handle_gga_sentences(nmea_sentence):
-    '''
-    Parameters
-    ----------
-    nmea_sentence: TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    A Python dictionary formatted as a DASRecord.
-    
-    
-    nmea_sentence = '$GPGGA,191119.90,3552.52780014,N,07539.67962499,W,2,08,1.0,-1.358,M,-36.497,M,4.9,0131*51'
-    '''           
-
-    format_definition = '{Time:f},{Latitude:nlat},{NorS:w},{Longitude:nlat},'
-    format_definition = format_definition + '{EorW:w},{FixQuality:d},{NumSats:d},{HDOP:of},'
-    format_definition = format_definition + '{AntennaHeight:of},{AntHt_units:w},'
-    format_definition = format_definition + '{GeoidHeight:of},{GeoHt_units:w},{LastDGPSUpdate:of},'
-    format_definition = format_definition + '{DGPSStationID:od}*{CheckSum:x}'
-
-    # add the timestamp...
-    nmea_sentence = TimestampTransform(sep=',').transform(nmea_sentence)
-    #toDASRec = ToDASRecordTransform('GPGGA')
-
-    parser = RecordParser(
-                  record_format='{timestamp:ti},{data_id:nc},{field_string}',
-                  field_patterns=[format_definition],
-                  delimiter=','
-                    )
-
-    das_record = parser.parse_record(nmea_sentence)
-    #das_record = toDASRec.transform(p)
-    #print('For GGA:','\n',p,'\n')
-
-    return(das_record)
-
-# $$$$$ For VTG $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def handle_vtg_sentences(nmea_sentence):
-    '''
-    Parameters
-    ----------
-    nmea_sentence: TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    A Python dictionary formatted as a DASRecord.
-    
-    nmea_sentence = '$GPVTG,93.84,T,104.94,M,0.04,N,0.07,K,D*1B'
-    '''           
-
-    format_definition = '{TrackMG_True:f},{TrackMG_T:w},{TrackMG_Mag:f},{TrackMG_M:w},'
-    format_definition = format_definition + '{GndSpd_Knots:f},{GndSpd_K:w},'
-    format_definition = format_definition + '{GndSpd_KiloPHr:f},{GndSpd_KPH:w},'
-    format_definition = format_definition + '{mode:w}*{CheckSum:x}'
-
-    # add the timestamp...
-    nmea_sentence = TimestampTransform(sep=',').transform(nmea_sentence)
-    #toDASRec = ToDASRecordTransform('GPVTG')
-
-    parser = RecordParser(
-                  record_format='{timestamp:ti},{data_id:nc},{field_string}',
-                  field_patterns=[format_definition],
-                  delimiter=','
-                    )
-
-    das_record = parser.parse_record(nmea_sentence)
-    #das_record = toDASRec.transform(p)
-    #print('For VTG:','\n',p,'\n')
-    
-    return(das_record)
-
-
-# $$$$$ For PASHR $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-def handle_pashr_sentences(nmea_sentence):
-    '''
-    Parameters
-    ----------
-    nmea_sentence: TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    A Python dictionary formatted as a DASRecord.
-    
-    nmea_sentence = '$PASHR,191119.00,260.12,T,0.01,-4.18,-0.01,0.179,0.527,0.117,1*3F'
-    '''           
-
-    format_definition = '{Time:f},{Heading:f},{True_Hdg:w},{Roll:f},{pitch:f},'
-    format_definition = format_definition + '{heave:f},{roll_sd:f},{pitch_sd:f}'
-    format_definition = format_definition + ',{hdg_sd:f},{quality_flag:w}*{Checksum:x}'
-
-    # add the timestamp...
-    nmea_sentence = TimestampTransform(sep=',').transform(nmea_sentence)
-    #toDASRec = ToDASRecordTransform('PASHR')
-
-    parser = RecordParser(
-                  record_format='{timestamp:ti},{data_id:nc},{field_string}',
-                  field_patterns=[format_definition],
-                  delimiter=','
-                    )
-
-    das_record = parser.parse_record(nmea_sentence)
-    #das_record = toDASRec.transform(p)
-    #print('For PASHR:','\n',das_record,'\n')
-
-    return(das_record)
 
 
 
@@ -244,7 +102,7 @@ def handle_pashr_sentences(nmea_sentence):
 #224.0.0.251
 #192.168.86.249  # the Ms Caroline's network, perhaps?
 
-HOST = "192.168.1.255"  # <-- Miss Caroline's but HOST not needed... 127.0.0.1
+HOST = "192.168.1.255"  # <-- suggested static IP addr if DHCP not available
 PORT = 56432  # 16003 <--Miss Caroline's VectorHemi330
 BROADCAST_PORT = 65432
 
@@ -270,7 +128,7 @@ print('running...')
 record_counter = 0
 
 while True:
-    
+
     data = data_reader.read()
 
     try:

@@ -53,7 +53,7 @@ For the vessel speed over ground (in kts from VTG sentences):
 from(bucket: "vtg")
   |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
   |> filter(fn: (r) => r["_measurement"] == "vtg")
-  |> filter(fn: (r) => r["_field"] == "GndSpd_K")
+  |> filter(fn: (r) => r["_field"] == "GndSpd_Knots")
   
   
 For the vessel heading (True from HDT sentences):
