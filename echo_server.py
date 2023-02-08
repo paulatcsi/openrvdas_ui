@@ -52,7 +52,7 @@ try:
     # load NMEA sentences from source file into a Python list...
     print('loading NMEA sentences from source')
     
-    f = open('../../VectorHemisphere330_NMEA_sentence_stream','r')
+    f = open('./VectorHemisphere330_NMEA_sentence_stream','r')
 except Exception as e:
     print('Problem opening the sentence source data...', e)
 

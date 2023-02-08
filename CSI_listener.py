@@ -15,6 +15,8 @@ The model / example upon which everything was built:
 # print(p)
 # output: {'data_id': 'grv1', 'timestamp': 1510275606.572, 'fields': {'GravityValue': 24557, 'GravityError': 0}}
 
+# InfluxDB API token:
+FPXjkJMNmAOK1sJV_rg_cHW8Stiyk30ZtIJn0Co1NEtKATKYOIlzFETR9w7nVoRACIQfg32uhn064vYPUps4Rg==
 
 @author: parisp15
 """
@@ -22,9 +24,9 @@ The model / example upon which everything was built:
 import sys
 from datetime import datetime
 
-logfile_path = '/Users/parisp15/Documents/'
+logfile_path = './'
 sys.path.append('/opt/openrvdas/')
-sys.path.append('Users/parisp15/Documents/GitHub/openrvdas_ui/')
+sys.path.append('./')
 
 import NMEA_sentence_parsing_definitions as NMEA_parsers
 
@@ -59,39 +61,45 @@ def create_influx_buckets():
     None.
 
     '''
+    # get the API token from influx.token:
+    try:
+    	f=open('influx_token','r');token=f.readline().rstrip();f.close()
+    except Exception as e:
+    	print('Could not access the influxDB Authorization Token from the file:')
+    	print('influx_token. Could this be why?',e)
+    	
     # set influxDB credentials:
-    INFLUXDB_AUTH_TOKEN = 'MAulD3Xi-72yNaNzoHAMDeuWI4KK4Wd1dnLB9slc-y3srffMy1oFOYmJBAOMVF8KICtY8fvfg_btmTvVZTashA=='
-    INFLUXDB_ORG = 'openrvdas'
-    INFLUXDB_URL = 'http://localhost:8086'
-    INFLUXDB_VERIFY_SSL = False
+    try:
+    	INFLUXDB_AUTH_TOKEN = token
+    	INFLUXDB_ORG = 'openrvdas'
+    	INFLUXDB_URL = 'http://localhost:8086'
+    	INFLUXDB_VERIFY_SSL = False
+    except Exception as e:
+    	print('Problem setting inflxDB credentials...', e)
+    
+    # build a list of influxDB bucket names:
+    try:
+    	# inflbuxDB bucket names
+    	buckets = ['hdt','vtg','gga','pashr']
+    	bucket_list = []
 
-    # inflbuxDB bucket names
-    buckets = ['hdt','vtg','gga','pashr']
-    bucket_list = []
-
-    for bucket in buckets:
+    	for bucket in buckets:
         
-        writer_id = bucket+'_writer'
+        	writer_id = bucket+'_writer'
 
-        writer_id = InfluxDBWriter(bucket_name=bucket, \
+        	writer_id = InfluxDBWriter(bucket_name=bucket, \
                             measurement_name=bucket, \
                             auth_token=INFLUXDB_AUTH_TOKEN, \
                             org=INFLUXDB_ORG, \
                             url=INFLUXDB_URL, \
                             verify_ssl=INFLUXDB_VERIFY_SSL)
         
-        bucket_list.append(writer_id)
-        
+        	bucket_list.append(writer_id)
+    except Exception as e:
+    	print('Problem generating influxDB bucket list. This could be why:')
+    	print(e)
+    	
     return(bucket_list)
-
-
-
-
-    
-# $$$$$ For HDT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-
-
 
 
 # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
